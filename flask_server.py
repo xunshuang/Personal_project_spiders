@@ -37,6 +37,7 @@ def virus():
     try:
         task = request.json
     except:
+        print("data type error")
         return jsonify({"message": "error", "reason": "data type error"})
 
     city = task['city']
