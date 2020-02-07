@@ -53,5 +53,14 @@ def virus():
         print(traceback.format_exc())
 
 
+@app.route('/search/<city>', methods=["get"])
+def virus_get(city):
+    try:
+        result = VirusSpider.parse_result(city)
+        return jsonify({"message": "sess", "result": "{}".format(result)})
+    except:
+        print(traceback.format_exc())
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=80, debug=True)
