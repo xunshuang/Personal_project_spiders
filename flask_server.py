@@ -37,17 +37,17 @@ def virus():
     try:
         task = request.json
     except:
-        return jsonify({"message": "失败", "reason": "数据格式错误"})
+        return jsonify({"message": "error", "reason": "data type error"})
 
     city = task['city']
     spider = task['spider']
     if spider not in spiders:
-        return jsonify({"message": "失败", "reason": "未找到爬虫文件"})
-    print('{}爬虫正在工作'.format(spider))
+        return jsonify({"message": "error", "reason": "spiderfile not found"})
+    print('{} is working'.format(spider))
     spider = spiders[spider]()
     try:
         result = spider.parse_result(city)
-        return jsonify({"message": "成功", "result": "{}".format(result)})
+        return jsonify({"message": "sess", "result": "{}".format(result)})
     except:
         print(traceback.format_exc())
 
