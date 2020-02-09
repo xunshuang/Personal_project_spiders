@@ -51,8 +51,10 @@ def virus():
 
 
     if spider not in spiders:
-        return jsonify({"message": "失败", "reason": "未找到爬虫文件"})
-
+        if flag:
+            return jsonify({"message": "失败", "reason": "未找到爬虫文件"})
+        else:
+            return str("message: 失败, reason: 未找到爬虫文件")
 
     spider = spiders[spider]()
     try:
