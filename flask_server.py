@@ -53,7 +53,7 @@ def virus():
     if spider not in spiders:
         return jsonify({"message": "失败", "reason": "未找到爬虫文件"})
 
-    print('{} is working'.format(spider))
+
     spider = spiders[spider]()
     try:
         result = spider.parse_result(city)
