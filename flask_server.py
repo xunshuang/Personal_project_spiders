@@ -1,6 +1,6 @@
 # coding:utf-8
 
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 import os
 import json
 import importlib
@@ -29,7 +29,7 @@ def init_spider():
 
 
 spiders = init_spider()
-app = Flask(__name__)
+app = Flask(__name__, template_folder='templates')
 
 
 @app.route('/virus', methods=["POST"])
@@ -38,28 +38,43 @@ def virus():
         task = request.json
     except:
         print("data type error")
-        return jsonify({"message": "error", "reason": "data type error"})
+        return jsonify({"message": "失败", "reason": "数据类型错误"})
 
-    city = task['city']
-    spider = task['spider']
+    try:
+        city = task['city']
+        spider = task['spider']
+        flag = True
+    except:
+        spider = request.form.get("spider")
+        city = request.form.get("city")
+        flag = False
+
+
     if spider not in spiders:
-        return jsonify({"message": "error", "reason": "spiderfile not found"})
+        return jsonify({"message": "失败", "reason": "未找到爬虫文件"})
+
     print('{} is working'.format(spider))
     spider = spiders[spider]()
     try:
         result = spider.parse_result(city)
-        return jsonify({"message": "sess", "result": "{}".format(result)})
+        if flag:
+            return jsonify({"message": "成功", "result": "{}".format(result.decode())})
+        else:
+            return str(result).replace('{','').replace('}','').replace("'",'')
     except:
         print(traceback.format_exc())
 
 
-@app.route('/search/<city>', methods=["get"])
-def virus_get(city):
-    try:
-        result = VirusSpider.parse_result(city)
-        return jsonify({"message": "sess", "result": "{}".format(result)})
-    except:
-        print(traceback.format_exc())
+@app.route('/', methods=["GET","POST"])
+def index_get():
+    if request.method == 'GET':
+        return render_template(template_name_or_list='index.html')
+    else:
+        return '请求方式错误'
+
+
+# @app.route('/web/post_form.js',methods=["POST"])
+# def post_form():
 
 
 if __name__ == '__main__':
