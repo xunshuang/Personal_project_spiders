@@ -1,6 +1,7 @@
 # coding:utf-8
 
 from flask import Flask, jsonify, request, render_template
+from common.find_spider import FindSpider
 import os
 import json
 import importlib
@@ -9,27 +10,9 @@ import inspect
 import traceback
 import sys
 
-
-def find_module_names(name):
-    p = importlib.import_module(name)
-    return [name for _, name, _ in pkgutil.iter_modules([os.path.dirname(p.__file__)])]
-
-
-def init_spider():
-    all_spiders = {}
-    source_list = find_module_names('spiders')
-    for source in source_list:
-        sourceFile = importlib.import_module('spiders.{}'.format(source))
-
-        for attr in inspect.getmembers(sourceFile):
-            if "Spider" in attr[0]:
-                all_spiders[attr[0]] = attr[1]
-                print('找到{}'.format(attr[0]))
-    return all_spiders
-
-
-spiders = init_spider()
 app = Flask(__name__, template_folder='templates')
+
+spiders = FindSpider()
 
 
 @app.route('/virus', methods=["POST"])
@@ -49,7 +32,7 @@ def virus():
         city = request.form.get("city")
         flag = False
 
-
+    print("city:{}".format(city))
     if spider not in spiders:
         if flag:
             return jsonify({"message": "失败", "reason": "未找到爬虫文件"})
@@ -60,14 +43,15 @@ def virus():
     try:
         result = spider.parse_result(city)
         if flag:
+
             return jsonify({"message": "成功", "result": "{}".format(result.decode())})
         else:
-            return str(result).replace('{','').replace('}','').replace("'",'')
+            return str(result).replace('{', '').replace('}', '').replace("'", '')
     except:
         print(traceback.format_exc())
 
 
-@app.route('/', methods=["GET","POST"])
+@app.route('/', methods=["GET", "POST"])
 def index_get():
     if request.method == 'GET':
         return render_template(template_name_or_list='index.html')
