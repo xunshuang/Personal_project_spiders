@@ -19,4 +19,4 @@ function http_post(url, params) {
             "spider": "VirusSpider",
             "city": "廊坊"
         }
-        http_post('http://49.232.84.13:80/virus', params = params)
+        http_post('http://49.232.84.13:80/virus_html', params = params)

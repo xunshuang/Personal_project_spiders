@@ -10,7 +10,6 @@ class NovelListSpider(object):
     def __init__(self):
         self.host = 'https://www.biqudu.net'
         self.Sess = requests.Session()
-
     def search_novel(self, keyword):
         url = self.host + '/searchbook.php'
         headers = {
@@ -18,7 +17,6 @@ class NovelListSpider(object):
             'accept-encoding': 'gzip, deflate, br',
             'accept-language': 'zh-CN,zh;q=0.9',
             'cache-control': 'no-cache',
-            'cookie': 'UM_distinctid=1702fd9851c3d7-09a412b6ef7058-67e1b3f-144000-1702fd9851d51e; CNZZDATA1260112074=1615103422-1581347710-https%253A%252F%252Fwww.sogou.com%252F%7C1581347710',
             'pragma': 'no-cache',
             'referer': 'https://www.biqudu.net/0_2/733136.html',
             'sec-fetch-mode': 'navigate',
@@ -64,7 +62,7 @@ class NovelListSpider(object):
         novels = self.search_novel(keyword=keyword)
         novels_html = etree.HTML(novels)
         novels_name, novels_writer, novels_sub, novels_id = self.select_novel(novels_html)
-        return novels_name, novels_writer, novels_sub, novels_id
+        return novels_name, novels_writer, novels_sub, novels_id,self.Sess
 
 
 if __name__ == '__main__':
