@@ -15,7 +15,6 @@ spiders_dict, spiders = FindSpider().init_spider()
 app = Flask(__name__, template_folder='templates')
 
 
-
 @app.route('/', methods=["GET", "POST"])  # 主页
 def index_get():
     global Sess
@@ -112,7 +111,6 @@ def novel_chapter_search():
     return render_template('novels_html/novel_chapter.html', chapter=chapter, href=hrefs)
 
 
-
 @app.route('/NovelContentSpider', methods=['GET'])  # 小说正文页
 def novel_content_search():
     content_id = request.args.get('content_id', type=str)
@@ -127,6 +125,11 @@ def novel_content_search():
         return render_template('novels_html/novel_content.html', text=text)
     except:
         print(traceback.format_exc())
+
+
+@app.route('/valentine', methods=['GET'])  # 情人节礼物
+def valentine():
+    return render_template('valentine_html/granule.html')
 
 
 # @app.route('/web/post_form.js',methods=["POST"])
