@@ -1,4 +1,7 @@
-from Personal_project_spiders.common.my_Spider import Spider
+try:
+    from Personal_project_spiders.common.my_Spider import Spider
+except:
+    from ..common.my_Spider import Spider
 
 
 class A(Spider):
