@@ -69,7 +69,7 @@ class VirusSpider(Spider):
 
         elif int(type) == 3:
             for i in result_dict['data']['overseas']:
-                if place == i['provinceName'] or place == i['preProvinceName']:
+                if place == i['provinceName']:
                     city_info['cityName'] = i['provinceName']
                     city_info['confirmedCount'] = i['confirmedCount']
                     city_info['suspectedCount'] = i['suspectedCount']
