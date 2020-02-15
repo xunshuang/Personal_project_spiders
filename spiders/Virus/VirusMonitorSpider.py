@@ -44,7 +44,13 @@ class VirusSpider(Spider):
                 for j in i['cities']:
                         if place == j['cityName']:
                             city_info = j
+                            try:
+                                del city_info['message']
+                            except:
+                                pass
                             break
+                        else:
+                            city_info['message'] = '所查询区域无可用信息'
         elif int(type) == 2:
             for i in result_dict['data']:
                 if place == i['provinceName'] or place == i['preProvinceName']:
@@ -53,7 +59,13 @@ class VirusSpider(Spider):
                     city_info['suspectedCount'] = i['suspectedCount']
                     city_info['curedCount'] = i['curedCount']
                     city_info['deadCount'] = i['deadCount']
+                    try:
+                        del city_info['message']
+                    except:
+                        pass
                     break
+                else:
+                    city_info['message'] = '所查询区域无可用信息'
 
         elif int(type) == 3:
             for i in result_dict['data']['overseas']:
@@ -63,7 +75,13 @@ class VirusSpider(Spider):
                     city_info['suspectedCount'] = i['suspectedCount']
                     city_info['curedCount'] = i['curedCount']
                     city_info['deadCount'] = i['deadCount']
+                    try:
+                        del city_info['message']
+                    except:
+                        pass
                     break
+                else:
+                    city_info['message'] = '所查询区域无可用信息'
 
         for i in result_dict['data']['timeline']['list']:
             info = {}
