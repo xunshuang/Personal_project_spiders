@@ -3,6 +3,7 @@
 from flask import Flask, jsonify, request, render_template, redirect
 from requests import Session
 from common.find_spider import FindSpider
+from common.my_Spider import Spider
 import os
 import json
 import importlib
@@ -37,14 +38,15 @@ def virus():
 
     try:
         city = task['city']
+        genre = task['genre']
         flag = True
     except:
-
         city = request.form.get("city")
+        genre = request.form.get('genre')
         flag = False
 
     spider = 'VirusSpider'
-    print("city:{}".format(city))
+
     if spider not in spiders:
         if flag:
             return jsonify({"message": "失败", "reason": "未找到爬虫文件"})
@@ -52,15 +54,9 @@ def virus():
             return str("message: 失败, reason: 未找到爬虫文件")
 
     spider = spiders_dict[spider]()
-    try:
-        result = spider.parse_result(city)
-        if flag:
-
-            return jsonify({"message": "成功", "result": "{}".format(result.decode())})
-        else:
-            return str(result).replace('{', '').replace('}', '').replace("'", '')
-    except:
-        print(traceback.format_exc())
+    spider.task = {'type': genre, 'place': city}
+    spider.crawl()
+    return render_template(template_name_or_list='virus_html/virus_result.html', cityname=city, result=spider.result)
 
 
 @app.route('/novels_index', methods=['GET'])  # 小说阅读主页

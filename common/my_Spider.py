@@ -28,6 +28,7 @@ class Spider(ABC):
         self.timeout = 15
         self.allow_redirects = True
         self.Sess = None
+        self.task = {}  # 用来存放任务参数
         self.allow_status_code = [200, 301, 302]
         self.meta = {}
         self.result = []  # 最后爬取处理的结果
