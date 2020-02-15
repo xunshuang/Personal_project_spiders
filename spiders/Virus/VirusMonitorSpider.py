@@ -52,7 +52,7 @@ class VirusSpider(Spider):
                         else:
                             city_info['message'] = '所查询区域无可用信息'
         elif int(type) == 2:
-            for i in result_dict['data']:
+            for i in result_dict['data']['area']:
                 if place == i['provinceName'] or place == i['preProvinceName']:
                     city_info['cityName'] = i['provinceName']
                     city_info['confirmedCount'] = i['confirmedCount']
