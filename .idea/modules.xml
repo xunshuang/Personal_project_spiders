@@ -3,6 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Personal_project_spiders.iml" filepath="$PROJECT_DIR$/.idea/Personal_project_spiders.iml" />
+      <module fileurl="file://F:/hm_flight/.idea/hm_flight.iml" filepath="F:/hm_flight/.idea/hm_flight.iml" />
+      <module fileurl="file://$USER_HOME$/Desktop/huya-master/.idea/huya-master.iml" filepath="$USER_HOME$/Desktop/huya-master/.idea/huya-master.iml" />
+      <module fileurl="file://F:/study_flask/.idea/study_flask.iml" filepath="F:/study_flask/.idea/study_flask.iml" />
+      <module fileurl="file://F:/机床交易信息爬取接口/.idea/机床交易信息爬取接口.iml" filepath="F:/机床交易信息爬取接口/.idea/机床交易信息爬取接口.iml" />
+      <module fileurl="file://F:/爬虫专用/.idea/爬虫专用.iml" filepath="F:/爬虫专用/.idea/爬虫专用.iml" />
     </modules>
   </component>
 </project>

@@ -23,7 +23,7 @@ class FindSpider(object):
                 sourceFile = importlib.import_module('spiders.' + source + '.{}'.format(dic))
 
                 for attr in inspect.getmembers(sourceFile):
-                    if "Spider" in attr[0]:
+                    if "Spider" in attr[0] and 'Spider' != attr[0]:
                         self.all_spiders[attr[0]] = attr[1]
                         print('找到{}'.format(attr[0]))
 
@@ -32,3 +32,11 @@ class FindSpider(object):
             self.allspiders.append(k)
 
         return self.all_spiders,self.allspiders
+
+
+
+if __name__ == '__main__':
+    a = FindSpider()
+    b,c = a.init_spider()
+    print(b)
+    print(c)

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>自娱自乐</title>
+    <style>
+        .index {
+            text-align: center;
+            background: darkgreen;
+        }
+
+        .down {
+            text-align: center;
+        }
+    </style>
+    <script>
+        function f() {
+            window.location.href('/check')
+        }
+    </script>
+</head>
+<body>
+
+<div class="index">
+    <h2><strong>欢迎登录</strong></h2>
+    <form method="post"> <!-- 指定提交方法为 POST -->
+        <label>用户名：</label>
+        <input type="text" name="username" placeholder="请输入用户名"><br/> <!-- 文本输入框 -->
+        <label>密码： </label>
+        <input type="password" name="password" placeholder="请输入密码"><br/> <!-- 文本输入框 -->
+
+        <input type="submit" value="login" id="nosand" onclick=f()> <!-- 提交按钮 -->
+    </form>
+</div>
+
+{% for message in get_flashed_messages() %}
+<div class=flash>
+    {{message}}
+</div>
+{% endfor %}
+
+<div class="down">
+    <p>闲在家里无事做，写个网站来娱乐-----孟帅</p>
+</div>
+
+</body>
+</html>
