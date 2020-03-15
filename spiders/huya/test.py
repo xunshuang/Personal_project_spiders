@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 # coding:utf-8
+import sys
+sys.path.insert(0, '../..')
 
 from common.my_Spider import Spider
 from selenium import webdriver

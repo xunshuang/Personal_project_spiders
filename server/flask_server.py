@@ -10,6 +10,9 @@ import time
 from threading import Thread
 from flask import Flask, request, render_template, redirect, flash, session, make_response
 from hashlib import md5
+import sys
+
+sys.path.insert(0, '..')
 from common.find_spider import FindSpider
 from common.my_Logger import Logger
 import os
@@ -26,6 +29,7 @@ task_drivers_queue = Queue(50)
 spiders_dict, spiders = FindSpider().init_spider()  # 初始化爬虫工厂，得到爬虫字典
 
 Logger_2 = Logger()
+
 
 class SpiderPool(Thread):  # 爬虫线程启动类
     def run(self):
@@ -195,6 +199,7 @@ def login_index():
         else:
             return resp
 
+
 @app.route('/crawlinterface', methods=['GET', 'POST'])  # 异步接口
 def crawlinterface():
     cookie = request.cookies.get('user')
@@ -216,6 +221,6 @@ def crawlinterface():
 
 if __name__ == '__main__':
     try:
-        app.run(debug=True)
+        app.run(host='0.0.0.0', port=80, debug=True)
     except:
         print(traceback.format_exc())
