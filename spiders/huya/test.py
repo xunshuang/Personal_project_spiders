@@ -16,11 +16,12 @@ import copy
 class _Spider(Spider):
     def start_request(self):
         url = 'https://www.baidu.com'
+        time.sleep(2)
         yield self.request('GET', url=url, finger=False, next_function=self.res)
 
     def res(self, req, resp):
-        print(resp.text)
-        yield ''
+        time.sleep(1)
+        yield resp.text
 
 
 if __name__ == '__main__':
