@@ -79,10 +79,10 @@ with open('../finger/finger.txt', 'w') as f:  # 每次启动该服务都会自�
 # finger_queue = open('finger.txt', 'w')
 
 conn = pymysql.connect(
-    host='cdb-9uatxy12.bj.tencentcdb.com',
+    host='haha',
     port=10236,
     user='xunshuang',
-    passwd='echo636474824!@#',
+    passwd='123456',
     db='spider_01_schema',
     charset='utf8'
 )  # 全局链接数据库的接口
