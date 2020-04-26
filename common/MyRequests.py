@@ -4,12 +4,12 @@ from hashlib import md5
 from requests.cookies import RequestsCookieJar
 from collections import Iterator
 from abc import ABC, abstractmethod
-from common.my_Logger import Logger
+from common.MyLogger import Logger
 import traceback
 import time
 
 
-class Spider(ABC):
+class MyRequests(ABC):
     def __init__(self):
 
         self.retry = 3
@@ -25,7 +25,6 @@ class Spider(ABC):
         self.meta = {}
         self.result = []  # 最后爬取处理的结果
 
-        self.slider_flag = None  # 极验验证码标志
 
     def __create_new_session__(self, new_session=False, UA=False, cookies=None):
         if not self.Sess or new_session:  # 如果没有初始化session，或者是new_session=True，就新建一个会话
@@ -210,6 +209,7 @@ class Spider(ABC):
                     if response_check:
                         response = response_check(response)
                     if response.status_code not in self.allow_status_code:
+                        print(response.text)
                         raise Exception(f'请求失败,状态码:{response.status_code}')
                     else:
                         break

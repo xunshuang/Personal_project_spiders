@@ -1,11 +1,6 @@
 #!/usr/bin/python3
 # coding:utf-8
-from gevent import monkey
 
-monkey.patch_all()
-from gevent.pool import Pool
-from gevent.queue import Queue
-from gevent import spawn
 import time
 from threading import Thread
 from flask import Flask, request, render_template, redirect, flash, session, make_response
@@ -14,59 +9,53 @@ import sys
 
 import pymysql
 
+import asyncio  # 将gevent升级
+from asyncio import Queue
+
 sys.path.insert(0, '..')
-from common.find_spider import FindSpider
-from common.my_Logger import Logger
+from common.FindSpider import FindSpider
+from common.MyLogger import Logger
 import os
-import json
 import traceback
-
-spiders_pool = Pool(20)  # 爬虫协程池子20并发
-
-drivers_pool = Pool(2)  # selenium并发池子，自用服务器性能不够，酌情改变此值
 
 task_spiders_queue = Queue()  # 存放消息的队列
 task_drivers_queue = Queue()
+# spiders_queue = Queue()
+# driver_queue = Queue()
 
 spiders_dict, spiders = FindSpider().init_spider()  # 初始化爬虫工厂，得到爬虫字典
 
 Logger_2 = Logger()
 
 
-class SpiderThread(Thread):  # 爬虫线程启动类
+
+async def do_work():
+    while True:
+        spiders_pool_size = task_spiders_queue.qsize()  # 目前池子大小
+        Logger_2.info(f'目前池子大小------->{spiders_pool_size}')
+
+        while not task_spiders_queue.empty():
+            task_queue_size = task_spiders_queue.qsize()  # 任务池的大小
+            Logger_2.info(f'任务队列大小------->{task_queue_size}')
+            Logger_2.info('-----------------**----------------')
+
+            task = task_spiders_queue.get_nowait()  # 读取任务数据
+            Logger_2.info(task)
+            Logger_2.info('<-爬虫池收到任务->')
+            source = task['source']
+            if source in spiders:  # 判断目标爬虫是否存在
+                target = spiders_dict[source]()
+                target.task = task
+                print(task)
+                job = asyncio.create_task(target.crawl())  # 暂时不需要回调
+                await asyncio.sleep(0)
+            else:
+                pass
+        await asyncio.sleep(3)
+
+class SpiderCorn(Thread):
     def run(self):
-        """
-        改写run函数
-        :return:
-        """
-        while True:
-
-            spiders_pool_size = spiders_pool.free_count()  # 目前池子大小
-            Logger_2.info(f'目前池子大小------->{spiders_pool_size}')
-
-            while not task_spiders_queue.empty():
-                task_queue_size = task_spiders_queue.qsize()  # 任务池的大小
-                Logger_2.info(f'任务队列大小------->{task_queue_size}')
-                Logger_2.info('-----------------**----------------')
-
-
-                task = task_spiders_queue.get_nowait()  # 读取任务数据
-                Logger_2.info(task)
-                Logger_2.info('<-爬虫池收到任务->')
-                source = task['source']
-                if source in spiders:  # 判断目标爬虫是否存在
-                    target = spiders_dict[source]()
-                    target.task = task
-                    spiders_pool.spawn(target.crawl)
-                    print(task)
-                else:
-                    pass
-            time.sleep(3)
-
-
-
-
-
+        asyncio.run(do_work())
 
 
 
@@ -79,10 +68,10 @@ with open('../finger/finger.txt', 'w') as f:  # 每次启动该服务都会自�
 # finger_queue = open('finger.txt', 'w')
 
 conn = pymysql.connect(
-    host='haha',
+    host='cdb-9uatxy12.bj.tencentcdb.com',
     port=10236,
     user='xunshuang',
-    passwd='123456',
+    passwd='echo636474824!@#',
     db='spider_01_schema',
     charset='utf8'
 )  # 全局链接数据库的接口
@@ -172,8 +161,8 @@ class User(object):  # 验证用户登录的类
             result = cursor.execute(
                 'select * from user_passwd where (user_name="%s") and (passwd="%s");' % (self.username, self.password)
             )
+            Logger_2.info('有用户登录{}'.format(self.username))
             self.conn.commit()
-
 
             if result > 0:
                 self.flag = True  # 表示执行正确
@@ -212,6 +201,7 @@ app.config['SESSION_COOKIE_NAME'] = 'SessionAliveFinger'
 @app.route('/', methods=['GET', 'POST'])
 def login_index():
     if request.method == 'GET':
+
         return render_template('login.html')
 
     if request.method == 'POST':
@@ -223,46 +213,49 @@ def login_index():
         if flag:
             session['logged_in'] = True
 
-            return resp
+            return  resp
         else:
-            return resp
+            asyncio.sleep(0)
+            return  resp
 
 
 @app.route('/crawlinterface', methods=['GET', 'POST'])  # 异步接口
 def crawlinterface():
-
     cookie = request.cookies.get('userinfo')
 
     f = request.cookies.get('f')
     with conn.cursor() as cursor:
         cursor.execute(
-            'select user_name,passwd from user_passwd where user_name="%s";' %(f)
+            'select user_name,passwd from user_passwd where user_name="%s";' % (f)
         )
         message = cursor.fetchall()[0]
 
         conn.commit()
 
-        if md5((f+message[1]).encode()).hexdigest() == cookie:
+        if md5((f + message[1]).encode()).hexdigest() == cookie:
             check = True
             task = request.json
-
+            if not task:
+                task = dict(request.data)
+            print(task)
             task_spiders_queue.put_nowait(task)
+
 
             return '任务已收到，立即执行！'
         else:
             check = False
-
-
         if not check:
+
             flash('没有访问权限,重新登录')
             return redirect('/', code=302)
 
 
-
 if __name__ == '__main__':
     try:
-        spider_thread = SpiderThread()
-        spider_thread.start()
-        app.run(host='127.0.0.1',port=5000,debug=True)
+        spider_corn = SpiderCorn()
+        spider_corn.start()
+        app.run(host='127.0.0.1', port=5000, debug=True)
+
+
     except:
         print(traceback.format_exc())
